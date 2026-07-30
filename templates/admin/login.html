@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <h3 class="text-center">🔐 Admin Login</h3>
+      {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+      <form method="POST">
+        <input type="text" name="username" class="form-control mb-3" placeholder="Username" value="admin" required>
+        <input type="password" name="password" class="form-control mb-3" placeholder="Password" value="admin123" required>
+        <button type="submit" class="btn btn-danger w-100">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

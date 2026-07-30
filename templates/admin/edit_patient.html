@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Patient</h2>
+<form method="POST">
+  <div class="mb-3">
+    <input type="text" name="name" class="form-control" value="{{ patient.name }}" required>
+  </div>
+  <div class="mb-3">
+    <input type="email" name="email" class="form-control" value="{{ patient.email }}" required>
+  </div>
+  <div class="mb-3">
+    <input type="password" name="password" class="form-control" placeholder="Leave blank to keep current password">
+  </div>
+  <button type="submit" class="btn btn-warning">Update Patient</button>
+  <a href="/admin/patients" class="btn btn-outline-secondary">Cancel</a>
+</form>
+{% endblock %}

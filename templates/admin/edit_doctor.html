@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Doctor</h2>
+<form method="POST">
+  <div class="mb-3">
+    <input type="text" name="name" class="form-control" value="{{ doctor.name }}" required>
+  </div>
+  <div class="mb-3">
+    <input type="email" name="email" class="form-control" value="{{ doctor.email }}" required>
+  </div>
+  <div class="mb-3">
+    <input type="password" name="password" class="form-control" placeholder="Leave blank to keep current password">
+  </div>
+  <div class="mb-3">
+    <input type="text" name="specialization" class="form-control" value="{{ doctor.specialization }}" required>
+  </div>
+  <button type="submit" class="btn btn-warning">Update Doctor</button>
+  <a href="/admin/doctors" class="btn btn-outline-secondary">Cancel</a>
+</form>
+{% endblock %}

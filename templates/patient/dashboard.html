@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Patient Dashboard</h2>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card p-4 text-center">
+      <h4>🩺 Check Disease Risk</h4>
+      <a href="/patient/check_risk" class="btn btn-primary">Get Started</a>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card p-4 text-center">
+      <h4>📜 My Health History</h4>
+      <a href="/patient/history" class="btn btn-outline-primary">View History</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

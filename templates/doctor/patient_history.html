@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Patient History & Prescriptions</h2>
+{% if consultations %}
+  {% for c in consultations %}
+  <div class="card p-3 mb-3">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h5>{{ c.patient_name }} - {{ c.disease }}</h5>
+        <small>Risk: {{ c.risk_level }} | Report Date: {{ c.report_date }}</small>
+      </div>
+      <span class="badge bg-{% if c.status == 'responded' %}success{% else %}warning{% endif %}">
+        {{ c.status.title() }}
+      </span>
+    </div>
+    
+    {% if c.message %}
+    <p><strong>Patient Message:</strong> {{ c.message }}</p>
+    {% endif %}
+    
+    {% if c.doctor_suggestion %}
+    <div class="alert alert-info">
+      <strong>Prescription:</strong> {{ c.doctor_suggestion }}
+    </div>
+    {% endif %}
+    
+    {% if c.status != 'responded' %}
+    <form method="POST" action="/consultation/respond/{{ c.id }}" class="mt-2">
+      <div class="mb-3">
+        <label>Prescription/Suggestion</label>
+        <textarea name="suggestion" class="form-control" rows="3" placeholder="Enter prescription or medical advice..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-success">Submit Prescription</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+{% else %}
+  <p>No patient consultations yet.</p>
+{% endif %}
+<a href="/doctor/dashboard" class="btn btn-outline-secondary">← Back</a>
+{% endblock %}

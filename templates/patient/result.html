@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4">
+  <h2>Risk Assessment Result</h2>
+  <p><strong>Disease:</strong> {{ report['disease'] }}</p>
+  <p><strong>Risk Level:</strong> 
+    <span class="badge bg-{% if report['risk_level'] == 'High' %}danger{% elif report['risk_level'] == 'Moderate' %}warning{% else %}success{% endif %}">
+      {{ report['risk_level'] }}
+    </span>
+  </p>
+  {% if report['risk_level'] == 'High' %}
+  <div class="alert alert-danger mt-3">
+    <strong>🚨 Strongly recommend consulting a doctor.</strong>
+  </div>
+  <!-- CHANGED ACTION TO /start-chat -->
+  <form action="/start-chat/{{ report['id'] }}" method="POST">
+    <div class="mb-3">
+      <label>Select Doctor</label>
+      <select name="doctor_id" class="form-select" required>
+        {% for doctor in doctors %}
+        <option value="{{ doctor['id'] }}">{{ doctor['name'] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label>Message for Doctor (Optional)</label>
+      <textarea name="message" class="form-control" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-warning">💬 Start Chat</button>
+  </form>
+  {% else %}
+  <div class="mt-3">
+    <!-- CHANGED ACTION TO /start-chat -->
+    <form action="/start-chat/{{ report['id'] }}" method="POST">
+      <div class="mb-3">
+        <label>Select Doctor</label>
+        <select name="doctor_id" class="form-select">
+          {% for doctor in doctors %}
+          <option value="{{ doctor['id'] }}">{{ doctor['name'] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label>Message for Doctor (Optional)</label>
+        <textarea name="message" class="form-control" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-outline-primary">💬 Start Chat (Optional)</button>
+    </form>
+  </div>
+  {% endif %}
+  <a href="/patient/history" class="btn btn-outline-secondary mt-3">View Full History</a>
+</div>
+{% endblock %}

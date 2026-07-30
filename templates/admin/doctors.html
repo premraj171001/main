@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Doctors Management</h2>
+<a href="/admin/doctor/add" class="btn btn-success mb-3">+ Add Doctor</a>
+<table class="table table-striped">
+  <thead>
+    <tr><th>ID</th><th>Name</th><th>Specialization</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for d in doctors %}
+    <tr>
+      <td>{{ d.id }}</td>
+      <td>{{ d.name }}</td>
+      <td>{{ d.specialization }}</td>
+      <td>
+        <a href="/admin/doctor/edit/{{ d.id }}" class="btn btn-sm btn-warning">Edit</a>
+        <form method="POST" action="/admin/doctor/delete/{{ d.id }}" style="display:inline;">
+          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="/admin/dashboard" class="btn btn-outline-secondary">← Back</a>
+{% endblock %}

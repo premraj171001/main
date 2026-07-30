@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add New Doctor</h2>
+<form method="POST">
+  <div class="mb-3">
+    <input type="text" name="name" class="form-control" placeholder="Full Name" required>
+  </div>
+  <div class="mb-3">
+    <input type="email" name="email" class="form-control" placeholder="Email" required>
+  </div>
+  <div class="mb-3">
+    <input type="password" name="password" class="form-control" placeholder="Password" required>
+  </div>
+  <div class="mb-3">
+    <input type="text" name="specialization" class="form-control" placeholder="Specialization" required>
+  </div>
+  <button type="submit" class="btn btn-success">Add Doctor</button>
+  <a href="/admin/doctors" class="btn btn-outline-secondary">Cancel</a>
+</form>
+{% endblock %}

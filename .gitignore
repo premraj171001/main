@@ -1,0 +1,13 @@
+# Environments
+venv/
+
+# Database
+healthbridge.db
+
+# Machine Learning Models and Data
+models/
+data/
+
+# Python cache
+__pycache__/
+*.pyc

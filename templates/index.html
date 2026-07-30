@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+  <h1 class="display-4">Smart Health Risk Awareness</h1>
+  <p class="lead">Clinical risk assessment + simple symptom guidance</p>
+  <div class="d-grid gap-3 d-md-block mt-4">
+    <a href="/auth/patient/login" class="btn btn-light btn-lg px-4 me-md-2">👤 Patient Login</a>
+    <a href="/auth/doctor/login" class="btn btn-outline-light btn-lg px-4">👨‍⚕️ Doctor Login</a>
+    <a href="/admin/login" class="btn btn-outline-dark btn-lg px-4">🔐 Admin Login</a>
+  </div>
+</div>
+
+<div class="row text-center">
+  <div class="col-md-4">
+    <div class="p-4">
+      <div class="display-5 text-primary">🩺</div>
+      <h5>Clinical Precision</h5>
+      <p>Diabetes, Heart, Kidney & more</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-4">
+      <div class="display-5 text-success">💬</div>
+      <h5>Symptom Chat</h5>
+      <p>Viral fever, cold, allergies</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-4">
+      <div class="display-5 text-info">👨‍⚕️</div>
+      <h5>Doctor Link</h5>
+      <p>Professional feedback when needed</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

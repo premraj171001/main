@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Clinical Assessment (Doctor Only)</h2>
+    
+    <form id="assessmentForm">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Select Patient</label>
+                <select name="patient_id" class="form-select" required>
+                    <option value="">-- Select Patient --</option>
+                    {% for p in patients %}
+                    <option value="{{ p.id }}">{{ p.name }} ({{ p.email }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label>Select Disease Model</label>
+                <select id="diseaseSelect" name="disease" class="form-select" required onchange="showFields()">
+                    <option value="">-- Select Disease --</option>
+                    <option value="diabetes">Diabetes</option>
+                    <option value="heart">Heart Disease</option>
+                    <option value="kidney">Kidney Disease</option>
+                    <option value="liver">Liver Disease</option>
+                    <option value="stroke">Stroke Prediction</option> </select>
+            </div>
+        </div>
+
+        <hr>
+
+        <div id="inputArea" class="row"></div>
+
+        <button type="submit" class="btn btn-primary mt-3">Analyze Risk</button>
+    </form>
+
+    <div id="resultSection" class="mt-4" style="display:none;">
+        <div class="alert" id="resultAlert"></div>
+    </div>
+</div>
+
+<script>
+// CONFIGURATION: Define fields, labels, types, and LIMITS (min/max)
+const diseaseFields = {
+    'diabetes': [
+        {name: 'Glucose', label: 'Glucose Level (mg/dL)', type: 'number', min: 0, max: 300},
+        {name: 'BMI', label: 'BMI', type: 'number', step: '0.1', min: 10, max: 60},
+        {name: 'Age', label: 'Age', type: 'number', min: 1, max: 120},
+        {name: 'Pregnancies', label: 'Pregnancies', type: 'number', min: 0, max: 20},
+        {name: 'Insulin', label: 'Insulin Level', type: 'number', min: 0, max: 900}
+    ],
+    'heart': [
+        {name: 'age', label: 'Age', type: 'number', min: 1, max: 120},
+        {name: 'cp', label: 'Chest Pain Type', type: 'select', options: [
+            {v:0, t:'Typical Angina'}, {v:1, t:'Atypical Angina'}, {v:2, t:'Non-anginal Pain'}, {v:3, t:'Asymptomatic'}
+        ]},
+        {name: 'chol', label: 'Cholesterol (mg/dL)', type: 'number', min: 100, max: 600},
+        {name: 'thalach', label: 'Max Heart Rate', type: 'number', min: 50, max: 250},
+        {name: 'exang', label: 'Exercise Angina', type: 'select', options: [{v:0, t:'No'}, {v:1, t:'Yes'}]},
+        {name: 'oldpeak', label: 'Oldpeak (ST depression)', type: 'number', step: '0.1', min: 0, max: 10}
+    ],
+    'kidney': [
+        {name: 'age', label: 'Age', type: 'number', min: 1, max: 120},
+        {name: 'blood_urea', label: 'Blood Urea', type: 'number', min: 10, max: 400},
+        {name: 'serum_creatinine', label: 'Serum Creatinine', type: 'number', step: '0.1', min: 0, max: 20},
+        {name: 'hypertension', label: 'Hypertension', type: 'select', options: [{v:0, t:'No'}, {v:1, t:'Yes'}]},
+        {name: 'diabetes', label: 'Diabetes', type: 'select', options: [{v:0, t:'No'}, {v:1, t:'Yes'}]}
+    ],
+    'liver': [
+        {name: 'Age', label: 'Age', type: 'number', min: 1, max: 120},
+        {name: 'Total_Bilirubin', label: 'Total Bilirubin', type: 'number', step: '0.1', min: 0, max: 40},
+        {name: 'Direct_Bilirubin', label: 'Direct Bilirubin', type: 'number', step: '0.1', min: 0, max: 20},
+        {name: 'Alkaline_Phosphotase', label: 'Alkaline Phosphotase', type: 'number', min: 50, max: 2500},
+        {name: 'Albumin', label: 'Albumin', type: 'number', step: '0.1', min: 1, max: 10}
+    ],
+    'stroke': [
+        {name: 'age', label: 'Age', type: 'number', min: 1, max: 120},
+        {name: 'avg_glucose_level', label: 'Avg Glucose Level', type: 'number', step: '0.01', min: 40, max: 350},
+        {name: 'bmi', label: 'BMI', type: 'number', step: '0.1', min: 10, max: 70},
+        {name: 'hypertension', label: 'Hypertension', type: 'select', options: [{v:0, t:'No'}, {v:1, t:'Yes'}]},
+        {name: 'heart_disease', label: 'Heart Disease', type: 'select', options: [{v:0, t:'No'}, {v:1, t:'Yes'}]}
+    ]
+};
+
+function showFields() {
+    const disease = document.getElementById('diseaseSelect').value;
+    const container = document.getElementById('inputArea');
+    container.innerHTML = '';
+
+    if (disease && diseaseFields[disease]) {
+        diseaseFields[disease].forEach(field => {
+            const col = document.createElement('div');
+            col.className = 'col-md-4 mb-3';
+            
+            let inputHtml = '';
+
+            if (field.type === 'select') {
+                // Render Dropdown
+                let opts = `<option value="">-- Select --</option>`;
+                field.options.forEach(o => {
+                    opts += `<option value="${o.v}">${o.t}</option>`;
+                });
+                inputHtml = `<select name="${field.name}" class="form-select" required>${opts}</select>`;
+            } else {
+                // Render Number Input with Min/Max
+                const minAttr = field.min !== undefined ? `min="${field.min}"` : '';
+                const maxAttr = field.max !== undefined ? `max="${field.max}"` : '';
+                inputHtml = `<input type="number" name="${field.name}" class="form-control" step="${field.step || '1'}" ${minAttr} ${maxAttr} required>`;
+            }
+
+            col.innerHTML = `
+                <label>${field.label}</label>
+                ${inputHtml}
+            `;
+            container.appendChild(col);
+        });
+    }
+}
+
+document.getElementById('assessmentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    data.mode = 'clinical'; 
+
+    const response = await fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    const resultSection = document.getElementById('resultSection');
+    const resultAlert = document.getElementById('resultAlert');
+    resultSection.style.display = 'block';
+
+    if (result.error) {
+        resultAlert.className = 'alert alert-danger';
+        resultAlert.textContent = result.error;
+    } else {
+        resultAlert.className = result.is_high ? 'alert alert-danger' : 'alert alert-success';
+        resultAlert.innerHTML = `
+            <h4>Prediction: ${result.risk} Risk of ${result.disease}</h4>
+            <p>Report generated successfully (ID: ${result.report_id})</p>
+        `;
+    }
+});
+</script>
+{% endblock %}

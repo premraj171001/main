@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Patients Management</h2>
+<a href="/admin/patient/add" class="btn btn-success mb-3">+ Add Patient</a>
+<table class="table table-striped">
+  <thead>
+    <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for p in patients %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td>{{ p.name }}</td>
+      <td>{{ p.email }}</td>
+      <td>
+        <a href="/admin/patient/edit/{{ p.id }}" class="btn btn-sm btn-warning">Edit</a>
+        <form method="POST" action="/admin/patient/delete/{{ p.id }}" style="display:inline;">
+          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="/admin/dashboard" class="btn btn-outline-secondary">← Back</a>
+{% endblock %}

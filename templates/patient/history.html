@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>My Health History</h2>
+{% if reports %}
+  {% for r in reports %}
+  <div class="card p-3 mb-3">
+    <div class="d-flex justify-content-between">
+      <div>
+        <strong>{{ r['disease'] }}</strong> ({{ r['mode'].title() }})
+        <br><small>{{ r['created_at'] }}</small>
+      </div>
+      <span class="badge bg-{% if r['risk_level'] == 'High' %}danger{% elif r['risk_level'] == 'Moderate' %}warning{% else %}success{% endif %}">
+        {{ r['risk_level'] }}
+      </span>
+    </div>
+    {% if r['doctor_suggestion'] %}
+    <div class="alert alert-info mt-2">
+      <strong>Doctor's Suggestion:</strong> {{ r['doctor_suggestion'] }}
+    </div>
+    {% elif r['status'] == 'pending' %}
+    <div class="alert alert-warning mt-2">
+      Consultation request sent — awaiting doctor response.
+    </div>
+    {% endif %}
+    
+    {% if r['prescription'] %}
+    <a href="/download_prescription/{{ r['consultation_id'] }}" class="btn btn-danger btn-sm mt-2">
+      📄 Download Prescription (PDF)
+    </a>
+    {% endif %}
+
+    {% if r['consultation_id'] %}
+    <a href="/chat/{{ r['consultation_id'] }}" class="btn btn-primary btn-sm mt-2">💬 Open Chat</a>
+    {% endif %}
+  </div>
+  {% endfor %}
+{% else %}
+  <p>No reports yet.</p>
+{% endif %}
+<a href="/patient/check_risk" class="btn btn-primary">Check New Risk</a>
+{% endblock %}

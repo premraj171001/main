@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Request Doctor Consultation</h2>
+
+<form id="consultationForm" method="POST" action="/start-chat/{{ report_id }}">
+  
+  <div class="mb-3">
+    <label>Select Specialization</label>
+    <select id="specialization" class="form-select" required>
+      <option value="">-- Select Specialization --</option>
+      {% for spec in specializations %}
+      <option value="{{ spec.specialization }}">{{ spec.specialization }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label>Select Doctor</label>
+    <select id="doctor_id" name="doctor_id" class="form-select" required disabled>
+      <option value="">-- Select Doctor --</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label>Initial Message (Optional)</label>
+    <textarea name="message" class="form-control" rows="3" placeholder="Describe your concern..."></textarea>
+  </div>
+
+  <input type="hidden" name="report_id" value="{{ report_id }}">
+
+  <button type="submit" class="btn btn-warning">Start Chat</button>
+  <a href="/patient/history" class="btn btn-outline-secondary">Cancel</a>
+</form>
+
+<script>
+// Keep this part. It handles the dynamic doctor dropdown.
+document.getElementById('specialization').addEventListener('change', async function() {
+  const specialization = this.value;
+  const doctorSelect = document.getElementById('doctor_id');
+  doctorSelect.innerHTML = '<option value="">-- Select Doctor --</option>';
+  
+  if (!specialization) {
+    doctorSelect.disabled = true;
+    return;
+  }
+  
+  const response = await fetch(`/get-doctors/${specialization}`);
+  const doctors = await response.json();
+  
+  doctors.forEach(doctor => {
+    const option = document.createElement('option');
+    option.value = doctor.id;
+    option.textContent = doctor.name;
+    doctorSelect.appendChild(option);
+  });
+  
+  doctorSelect.disabled = false;
+});
+
+// FIX 2: REMOVED the 'submit' event listener entirely.
+// We are now letting the HTML Form handle the POST request naturally.
+</script>
+{% endblock %}

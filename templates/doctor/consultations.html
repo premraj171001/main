@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Consultation Requests</h2>
+{% if consultations %}
+  {% for c in consultations %}
+  <div class="card p-3 mb-3">
+    <div class="d-flex justify-content-between">
+      <h5>{{ c['patient_name'] }} - {{ c['disease'] }} ({{ c['risk_level'] }})</h5>
+      <span class="badge bg-{% if c['status'] == 'responded' %}success{% else %}warning{% endif %}">
+        {{ c['status'].title() }}
+      </span>
+    </div>
+    <p><strong>Patient Message:</strong> {{ c['message'] or 'No message' }}</p>
+    {% if c['doctor_suggestion'] %}
+    <div class="alert alert-info">
+      <strong>Your Suggestion:</strong> {{ c['doctor_suggestion'] }}
+    </div>
+    {% else %}
+    <form method="POST" action="/consultation/respond/{{ c['id'] }}" class="mt-3">
+      <div class="mb-3">
+        <label>Your Professional Suggestion</label>
+        <textarea name="suggestion" class="form-control" rows="3" placeholder="Type your advice..." required></textarea>
+      </div>
+      <div class="mb-3">
+        <label>Write Prescription (Optional)</label>
+        <textarea name="prescription" class="form-control" rows="4" placeholder="Rx: Medicine name, dosage, instructions..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-success">Send Response & Prescription</button>
+    </form>
+    {% endif %}
+    <a href="/chat/{{ c['id'] }}" class="btn btn-primary btn-sm mt-2">💬 Open Chat</a>
+  </div>
+  {% endfor %}
+{% else %}
+  <p>No consultation requests.</p>
+{% endif %}
+{% endblock %}

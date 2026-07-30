@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Symptom Checker</h2>
+
+<div class="card p-4">
+  <form id="chatbotForm">
+    <div class="mb-3">
+      <label>Describe your symptoms in detail:</label>
+      <textarea name="symptoms" class="form-control" rows="4" placeholder="e.g., I have fever and body ache..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Analyze Symptoms</button>
+  </form>
+</div>
+
+<div id="result" class="mt-4"></div>
+
+<script>
+document.getElementById('chatbotForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = { mode: 'chatbot', symptoms: e.target.symptoms.value };
+  try {
+    const res = await fetch('/predict', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (result.error) throw new Error(result.error);
+    showResult(result);
+  } catch (error) {
+    document.getElementById('result').innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+  }
+});
+
+function showResult(data) {
+  let alertClass = 'alert alert-success';
+  if (data.risk === 'High') alertClass = 'alert alert-danger';
+  else if (data.risk === 'Moderate') alertClass = 'alert alert-warning';
+  
+  let html = `<div class="${alertClass}">
+    <h5>${data.disease}</h5>
+    <p>Risk Level: <strong>${data.risk}</strong></p>
+  `;
+  if (data.is_high) {
+    html += `<p class="mt-2"><strong>🚨 Strongly recommend consulting a doctor.</strong></p>
+             <a href="/consultation/form/${data.report_id}" class="btn btn-warning">Request Doctor Consultation</a>`;
+  } else {
+    html += `<button class="btn btn-outline-primary mt-2" onclick="showConsult(${data.report_id})">
+               💬 Request Doctor Consultation (Optional)
+             </button>`;
+  }
+  html += '</div>';
+  document.getElementById('result').innerHTML = html;
+}
+function showConsult(reportId) {
+  window.location.href = `/consultation/form/${reportId}`;
+}
+</script>
+{% endblock %}

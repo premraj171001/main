@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>🗄️ System Database Viewer</h2>
+  <a href="/doctor/dashboard" class="btn btn-outline-secondary">← Back</a>
+</div>
+
+<!-- Patients Table -->
+<h3 class="mt-4">Patients</h3>
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for p in patients %}
+      <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.email }}</td>
+        <td>
+          <form method="POST" action="/doctor/delete-patient/{{ p.id }}" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Reports Table -->
+<h3 class="mt-4">Reports</h3>
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th><th>Patient ID</th><th>Mode</th><th>Disease</th><th>Risk</th><th>Date</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in reports %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.patient_id }}</td>
+        <td>{{ r.mode.title() }}</td>
+        <td>{{ r.disease }}</td>
+        <td>
+          <span class="badge bg-{% if r.risk_level == 'High' %}danger{% elif r.risk_level == 'Moderate' %}warning{% else %}success{% endif %}">
+            {{ r.risk_level }}
+          </span>
+        </td>
+        <td>{{ r.created_at }}</td>
+        <td>
+          <form method="POST" action="/doctor/delete-report/{{ r.id }}" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Consultations Table -->
+<h3 class="mt-4">Consultations</h3>
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th><th>Patient ID</th><th>Doctor ID</th><th>Report ID</th><th>Status</th><th>Suggestion</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in consultations %}
+      <tr>
+        <td>{{ c.id }}</td>
+        <td>{{ c.patient_id }}</td>
+        <td>{{ c.doctor_id }}</td>
+        <td>{{ c.report_id }}</td>
+        <td>{{ c.status.title() }}</td>
+        <td>{{ c.doctor_suggestion or '—' }}</td>
+        <td>
+          <form method="POST" action="/doctor/delete-consultation/{{ c.id }}" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

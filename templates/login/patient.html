@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <h3 class="text-center mb-4">👤 Patient Login</h3>
+      <form method="POST">
+        <div class="mb-3">
+          <input type="text" name="username" class="form-control" placeholder="Username" value="patient" required>
+        </div>
+        <div class="mb-3">
+          <input type="password" name="password" class="form-control" placeholder="Password" value="patient" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <div class="text-center mt-3">
+          <a href="/">← Back to Role Selection</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
