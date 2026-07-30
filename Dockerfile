@@ -1,6 +1,6 @@
 from python-3.10
 WORKDIR /Healthbridge
-COPY ./requirements.txt
+COPY requirements.txt .
 RUN pip install requirements.txt
 copy . .
 expose 3012
