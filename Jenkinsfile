@@ -37,7 +37,7 @@ pipeline{
                 bat 'docker rm -f healthbridgecont || true'
 
                 //running the container
-                bat 'docker run -d -p 3012:3012 -v HBDB --network HBDB --name healthbridgecont healthbridgeimg:v1.1'
+                bat 'docker run -d -p 3012:3012 -v HBDB:Healthbridge/data/ --network HBDB --name healthbridgecont healthbridgeimg:v1.1'
 
             }
         }
