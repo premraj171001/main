@@ -1,4 +1,4 @@
-from python-3.10
+FROM python-3.10
 WORKDIR /Healthbridge
 COPY requirements.txt .
 RUN pip install requirements.txt
